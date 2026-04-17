@@ -4,3 +4,4 @@ transformers
 sentencepiece
 openai-whisper
 pydub
+textblob
