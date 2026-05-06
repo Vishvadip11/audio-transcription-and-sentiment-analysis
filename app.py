@@ -25,26 +25,29 @@ def set_bg(path):
         background-image: url("data:image/jpg;base64,{encoded}");
         background-size: cover;
         background-position: center;
+        background-attachment: fixed;
     }}
 
+    /* Remove the white box and center alignment */
+    .block-container {{
+        background-color: transparent !important;
+        padding-top: 2rem !important;
+    }}
+
+    /* Keep headers and common text black as requested */
+    h1, h2, h3, p, label, .stMarkdown {{
+        color: black !important;
+    }}
+
+    /* Header hidden */
     header {{visibility: hidden;}}
-    .block-container {{padding-top: 0rem !important;}}
-
-    .main-box {{
-        background: rgba(255,255,255,0.92);
-        padding: 30px;
-        border-radius: 15px;
-        width: 70%;
-        margin: auto;
-        margin-top: 10px;
-    }}
     </style>
     """, unsafe_allow_html=True)
 
 set_bg(r"D:\pro\project\assets\bg2.jpg")
 
 # ---------- UI ----------
-st.markdown('<div class="main-box">', unsafe_allow_html=True)
+# (Div-less approach)
 
 st.markdown("## 🎤 Multilingual Audio Transcriber")
 st.caption("Upload → Select Language → Transcribe → Translate → Tone")
@@ -204,4 +207,4 @@ with right:
     else:
         st.info("Upload audio to start")
 
-st.markdown('</div>', unsafe_allow_html=True)
+# (End of UI)
