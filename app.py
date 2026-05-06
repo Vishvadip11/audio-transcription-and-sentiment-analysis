@@ -44,7 +44,7 @@ def set_bg(path):
     </style>
     """, unsafe_allow_html=True)
 
-set_bg(r"D:\pro\project\assets\bg2.jpg")
+set_bg("assets/bg2.jpg")
 
 # ---------- UI ----------
 # (Div-less approach)
