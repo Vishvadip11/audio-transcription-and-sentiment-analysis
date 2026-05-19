@@ -41,6 +41,31 @@ def set_bg(path):
 
     /* Header hidden */
     header {{visibility: hidden;}}
+
+    /* Clean Process button style */
+    .stButton > button {{
+        background: #ffffff !important;
+        color: #000000 !important;
+        border: 2px solid #000000 !important;
+        box-shadow: none !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+    }}
+
+    .stButton > button:hover {{
+        background: #f3f3f3 !important;
+        color: #000000 !important;
+        border-color: #000000 !important;
+        box-shadow: none !important;
+    }}
+
+    .stButton > button:focus,
+    .stButton > button:focus-visible,
+    .stButton > button:active {{
+        outline: none !important;
+        box-shadow: none !important;
+        color: #000000 !important;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
