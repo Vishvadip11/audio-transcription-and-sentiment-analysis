@@ -113,6 +113,7 @@ with right:
         if "current_file" not in st.session_state or st.session_state.current_file != uploaded_file.name:
             st.session_state.current_file = uploaded_file.name
             st.session_state.processed = False
+            st.session_state.translation_done = False
             st.session_state.text = ""
             st.session_state.final_lang = ""
             st.session_state.conf = 0.0
@@ -163,71 +164,83 @@ with right:
                 ["English", "Hindi", "Gujarati"]
             )
 
-            with st.spinner("Translating..."):
-                source_clean = clean_text(st.session_state.text)
-                chunks = split_text(source_clean)
-                translated = ""
+            if st.button("🔄 Translate & Analyze"):
+                with st.spinner("Translating..."):
+                    source_clean = clean_text(st.session_state.text)
+                    chunks = split_text(source_clean)
+                    translated = ""
 
-                for c in chunks:
-                    out = translate_text(
-                        c,
-                        st.session_state.final_lang.lower(),
-                        [target_lang.lower()]
-                    )
-                    translated += " " + out[target_lang.lower()]
+                    for c in chunks:
+                        out = translate_text(
+                            c,
+                            st.session_state.final_lang.lower(),
+                            [target_lang.lower()]
+                        )
+                        translated += " " + out[target_lang.lower()]
 
-            # Final cleanup of translated text
-            translated = clean_text(translated)
+                    # Final cleanup of translated text
+                    translated = clean_text(translated)
+                    st.session_state.translated = translated
+                    st.session_state.target_lang = target_lang
 
-            st.markdown(f"### 🌍 {target_lang} Output")
-            st.success(translated)
+                # ---------- TONE ----------
+                st.session_state.tone = analyze_tone(translated)
 
-            # ---------- TONE ----------
-            tone = analyze_tone(translated)
-
-            if tone:
-                emoji = {
-                    "POSITIVE": "😊",
-                    "NEGATIVE": "😠",
-                    "NEUTRAL": "😐"
-                }.get(tone["tone"], "")
-
-                st.markdown("### 🎭 Tone")
-                st.write(f"{emoji} {tone['tone']} | Score: {tone['score']}")
-
-            # ---------- SUMMARY (LAST 🔥) ----------
-            with st.spinner(f"Generating {target_lang} Summary..."):
-                try:
-                    src_lang_key = st.session_state.final_lang.lower()
-                    
-                    if src_lang_key == "english":
-                        en_text_for_summary = st.session_state.text
-                    else:
-                        chunks_en = split_text(st.session_state.text)
-                        en_text_for_summary = ""
-                        for c in chunks_en:
-                            out_en = translate_text(c, src_lang_key, ["english"])
-                            en_text_for_summary += " " + out_en.get("english", "")
-
-                    if en_text_for_summary.strip():
-                        raw_summary = summarize_text(en_text_for_summary)
-
-                        if target_lang.lower() == "english":
-                            final_summary = raw_summary
-                        else:
-                            out_summ = translate_text(raw_summary, "english", [target_lang.lower()])
-                            final_summary = out_summ.get(target_lang.lower(), "")
+                # ---------- SUMMARY (LAST 🔥) ----------
+                with st.spinner(f"Generating {target_lang} Summary..."):
+                    try:
+                        src_lang_key = st.session_state.final_lang.lower()
                         
-                        if final_summary:
-                            st.markdown(f"### 📌 {target_lang} Summary")
-                            st.info(final_summary)
+                        if src_lang_key == "english":
+                            en_text_for_summary = st.session_state.text
                         else:
-                            st.error("Summary translation failed.")
-                    else:
-                        st.warning("Empty transcription - cannot summarize.")
+                            chunks_en = split_text(st.session_state.text)
+                            en_text_for_summary = ""
+                            for c in chunks_en:
+                                out_en = translate_text(c, src_lang_key, ["english"])
+                                en_text_for_summary += " " + out_en.get("english", "")
 
-                except Exception as e:
-                    st.error(f"Summary Error: {str(e)}")
+                        if en_text_for_summary.strip():
+                            raw_summary = summarize_text(en_text_for_summary)
+
+                            if target_lang.lower() == "english":
+                                final_summary = raw_summary
+                            else:
+                                out_summ = translate_text(raw_summary, "english", [target_lang.lower()])
+                                final_summary = out_summ.get(target_lang.lower(), "")
+                            
+                            st.session_state.final_summary = final_summary if final_summary else "Summary translation failed."
+                        else:
+                            st.session_state.final_summary = "Empty transcription - cannot summarize."
+
+                    except Exception as e:
+                        st.session_state.final_summary = f"Summary Error: {str(e)}"
+
+                st.session_state.translation_done = True
+
+            # ---------- DISPLAY RESULTS IF DONE ----------
+            if st.session_state.get("translation_done", False):
+                st.markdown(f"### 🌍 {st.session_state.target_lang} Output")
+                st.success(st.session_state.translated)
+
+                # Display Tone
+                if st.session_state.tone:
+                    emoji = {
+                        "POSITIVE": "😊",
+                        "NEGATIVE": "😠",
+                        "NEUTRAL": "😐"
+                    }.get(st.session_state.tone["tone"], "")
+
+                    st.markdown("### 🎭 Tone")
+                    st.write(f"{emoji} {st.session_state.tone['tone']} | Score: {st.session_state.tone['score']}")
+
+                # Display Summary
+                if st.session_state.final_summary:
+                    if "Error" in st.session_state.final_summary or "Empty" in st.session_state.final_summary or "failed" in st.session_state.final_summary:
+                        st.warning(st.session_state.final_summary)
+                    else:
+                        st.markdown(f"### 📌 {st.session_state.target_lang} Summary")
+                        st.info(st.session_state.final_summary)
 
     else:
         st.info("Upload audio to start")
