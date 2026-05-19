@@ -21,7 +21,16 @@ LANGUAGE_PROMPTS = {
     "es": "Esta is una transcripción en español limpia."
 }
 
+def clear_whisper_hooks():
+    """Clears zombie kv_cache hooks left by interrupted Streamlit runs."""
+    for m in model.modules():
+        if hasattr(m, "_forward_hooks"):
+            m._forward_hooks.clear()
+        if hasattr(m, "_forward_pre_hooks"):
+            m._forward_pre_hooks.clear()
+
 def whisper_detect_language(audio_path):
+    clear_whisper_hooks()
     audio = whisper.load_audio(audio_path)
     
     # Use 5 segments to "vote" on the language (start, 25%, 50%, 75%, end)
@@ -62,6 +71,7 @@ def whisper_detect_language(audio_path):
     return best_lang_code, lang_name, confidence
 
 def whisper_transcribe(audio_path, language_code=None):
+    clear_whisper_hooks()
     audio = whisper.load_audio(audio_path)
 
     if audio is None or len(audio) < 16000:
