@@ -1,6 +1,6 @@
 streamlit
 torch
-transformers
+transformers<5
 sentencepiece
 openai-whisper
 textblob
