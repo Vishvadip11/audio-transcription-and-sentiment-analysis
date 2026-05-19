@@ -6,7 +6,6 @@ MODEL_PATH = "facebook/bart-large-cnn"
 
 # Initialize the summarizer pipeline once
 summarizer = pipeline(
-    "summarization",
     model=MODEL_PATH,
     tokenizer=MODEL_PATH
 )
