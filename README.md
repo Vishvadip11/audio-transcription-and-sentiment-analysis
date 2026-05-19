@@ -1,96 +1,129 @@
-# 🎤 Multilingual Audio Transcriber & Analyzer
+---
+title: Audio Transcription Sentiment
+emoji: 🎤
+colorFrom: red
+colorTo: red
+sdk: streamlit
+app_file: app.py
+pinned: false
+short_description: Multilingual Audio Transcriber and Analyzer
+license: mit
+---
 
-A powerful, end-to-end audio processing pipeline that transcribes, translates, summarizes, and analyzes the sentiment of audio files. Built with **Streamlit** and powered by state-of-the-art AI models from **OpenAI** and **Meta**.
+# Multilingual Audio Transcriber & Analyzer
+
+A Streamlit app that converts audio to text, detects the spoken language, translates the transcript, summarizes it, and performs tone analysis.
 
 ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=Streamlit&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
 ![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Transformers-orange?style=for-the-badge)
 
----
+## Features
 
-## ✨ Features
+- Upload MP3 or WAV audio files.
+- Detect the spoken language automatically with Whisper.
+- Transcribe multilingual audio.
+- Translate output into English, Hindi, or Gujarati.
+- Generate an English summary and translate it to the selected output language.
+- Analyze transcript tone with TextBlob.
+- Run in Streamlit locally, on Streamlit Community Cloud, or in Docker.
 
-- **Multi-Format Support**: Upload MP3 or WAV files.
-- **Auto-Language Detection**: Automatically identifies the spoken language using Whisper.
-- **High-Accuracy Transcription**: Powered by OpenAI's Whisper model.
-- **Multilingual Translation**: Seamlessly translates transcriptions into **English, Hindi, and Gujarati** using Meta's NLLB (No Language Left Behind) model.
-- **Smart Summarization**: Generates concise summaries of long audio content using the BART-large-cnn model.
-- **Sentiment Analysis**: Detects the tone (Positive, Negative, or Neutral) of the transcribed content.
-- **Premium UI**: Clean, responsive dashboard with background styling and intuitive workflow.
+## Tech Stack
 
----
+- Speech-to-text: [OpenAI Whisper](https://github.com/openai/whisper)
+- Translation: [NLLB-200 Distilled 600M](https://huggingface.co/facebook/nllb-200-distilled-600M)
+- Summarization: [BART Large CNN](https://huggingface.co/facebook/bart-large-cnn)
+- Sentiment: [TextBlob](https://textblob.readthedocs.io/en/dev/)
+- UI: [Streamlit](https://streamlit.io/)
+- Audio conversion: `ffmpeg`
 
-## 🛠️ Tech Stack
+## Local Setup
 
-- **Speech-to-Text**: [OpenAI Whisper](https://github.com/openai/whisper)
-- **Translation**: [NLLB-200 (Distilled 600M)](https://huggingface.co/facebook/nllb-200-distilled-600M)
-- **Summarization**: [BART-Large-CNN](https://huggingface.co/facebook/bart-large-cnn)
-- **Sentiment**: [TextBlob](https://textblob.readthedocs.io/en/dev/)
-- **UI Framework**: [Streamlit](https://streamlit.io/)
-- **Audio Processing**: [Pydub](http://pydub.com/)
+### 1. Clone the repository
 
----
-
-## 🚀 Installation
-
-### 1. Clone the Repository
 ```bash
 git clone https://github.com/Vishvadip11/audio-transcription-and-sentiment-analysis.git
 cd audio-transcription-and-sentiment-analysis
 ```
 
-### 2. Install FFmpeg (Required)
-This project requires FFmpeg for audio processing.
+### 2. Install FFmpeg
 
-- **Windows**: `choco install ffmpeg` (using Chocolatey) or download from [ffmpeg.org](https://ffmpeg.org/).
-- **Linux**: `sudo apt update && sudo apt install ffmpeg`
-- **macOS**: `brew install ffmpeg`
+- Windows: install from [ffmpeg.org](https://ffmpeg.org/) or `choco install ffmpeg`
+- Linux: `sudo apt update && sudo apt install ffmpeg`
+- macOS: `brew install ffmpeg`
 
-### 3. Install Dependencies
+### 3. Install Python dependencies
+
 ```bash
 pip install -r requirements.txt
-pip install textblob
 ```
 
----
+### 4. Run the app
 
-## 💻 Usage
-
-Run the Streamlit application:
 ```bash
 streamlit run app.py
 ```
 
-1. **Upload** your audio file (MP3/WAV).
-2. **Select** the spoken language or leave it as "Auto Detect".
-3. **Click "Process"** to transcribe the audio.
-4. **View** the results: transcription, translation, tone analysis, and summary.
+## Deployment
 
----
+### Option 1: Streamlit Community Cloud
 
-## 📁 Project Structure
+This repo is ready for Streamlit Cloud deployment:
 
-```text
-├── app.py                # Main Streamlit UI
-├── transcribe.py         # Custom transcription logic
-├── whisper_transcribe.py # Whisper-specific functions
-├── translate_nllb.py    # NLLB model for translation
-├── summarize.py          # BART model for summarization
-├── sentiment.py          # Tone analysis using TextBlob
-├── text_utils.py         # Text cleaning and chunking
-├── convert.py            # Audio format conversion
-├── assets/               # UI background images
-└── requirements.txt      # Project dependencies
+- `app.py` is the entrypoint
+- `requirements.txt` installs Python packages
+- `packages.txt` installs `ffmpeg`
+- `.streamlit/config.toml` enables cloud-friendly startup
+
+Steps:
+
+1. Push this project to GitHub.
+2. Open [share.streamlit.io](https://share.streamlit.io/).
+3. Create a new app and select this repository.
+4. Set the main file path to `app.py`.
+5. Click deploy.
+
+Notes:
+
+- The first startup can take time because Whisper, NLLB, and BART models may download on the server.
+- Free-tier machines can feel slow for longer audio because several ML models run in sequence.
+
+### Option 2: Docker
+
+This repo also includes a `Dockerfile` for platforms like Render, Railway, Azure, or any VPS with Docker support.
+
+Build and run locally:
+
+```bash
+docker build -t multilingual-audio-transcriber .
+docker run -p 8501:8501 multilingual-audio-transcriber
 ```
 
----
+Open `http://localhost:8501`
 
-## 🤝 Contributing
-Contributions are welcome! Feel free to open an issue or submit a pull request.
+## Project Structure
 
-## 📄 License
-Distributed under the MIT License. See `LICENSE` for more information.
+```text
+app.py
+transcribe.py
+whisper_transcribe.py
+translate_nllb.py
+summarize.py
+sentiment.py
+text_utils.py
+convert.py
+assets/
+requirements.txt
+packages.txt
+Dockerfile
+```
 
----
-**Developed by [Vishvadip11](https://github.com/Vishvadip11)**
+## Notes
+
+- Heavy models are loaded lazily and cached to reduce startup failures during deployment.
+- The app currently stores uploaded audio in the local `audio/` folder while a session is active.
+
+## License
+
+Distributed under the MIT License.
