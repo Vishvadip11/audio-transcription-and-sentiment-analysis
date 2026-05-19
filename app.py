@@ -149,7 +149,7 @@ with right:
 
                 st.session_state.text = clean_text(text)
                 st.session_state.processed = True
-                st.balloons()
+                
 
         if st.session_state.get("processed", False):
             st.success(f"🧠 Detected: {st.session_state.final_lang} ({st.session_state.conf:.1%})")
@@ -241,6 +241,7 @@ with right:
                     else:
                         st.markdown(f"### 📌 {st.session_state.target_lang} Summary")
                         st.info(st.session_state.final_summary)
+                        st.balloons()
 
     else:
         st.info("Upload audio to start")
