@@ -56,7 +56,7 @@ def translate_text(text, source_lang, target_langs):
             # Generate with premium parameters to prevent truncation and loops
             translated_tokens = model.generate(
                 **inputs,
-                forced_bos_token_id=tokenizer.lang_code_to_id[tgt_code],
+                forced_bos_token_id=tokenizer.convert_tokens_to_ids(tgt_code),
                 max_new_tokens=256,   # Allow enough expansion for each chunk
                 num_beams=5,          # High intelligence mode
                 early_stopping=True,  # Stop once we have a clear conclusion
